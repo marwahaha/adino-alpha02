@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "934436264365",
+    "firebase_url": "https://adino-alpha01-a6f5c.firebaseio.com",
+    "project_id": "adino-alpha01-a6f5c",
+    "storage_bucket": "adino-alpha01-a6f5c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934436264365:android:6bdf039cb845c43f",
+        "android_client_info": {
+          "package_name": "com.example.adino"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "934436264365-i3ahjse47j30ftorr04pidbjbk6m56lb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.adino",
+            "certificate_hash": "7f022471abee855738260630f6b75e97761efd29"
+          }
+        },
+        {
+          "client_id": "934436264365-sb7gc6drf5lhgigme9qcniqg56gbbql4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjM6mQHYLFA4xdfG-wx9rwbD6EsOKRld4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "934436264365-sb7gc6drf5lhgigme9qcniqg56gbbql4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
