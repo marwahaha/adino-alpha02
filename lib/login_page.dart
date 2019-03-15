@@ -239,11 +239,6 @@ class _LoginPageState extends State<LoginPage> {
 					height: 42.0,
 					onPressed: (){
             _handleSignIn();
-            
-              
-        
-           
-             
             print(_currentUser);
           },
 					color: Colors.redAccent,
