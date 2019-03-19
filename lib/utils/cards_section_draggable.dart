@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'profile_card_draggable.dart';
+import "package:cloud_firestore/cloud_firestore.dart";
 
 class CardsSectionDraggable extends StatefulWidget{
   @override
@@ -8,16 +9,35 @@ class CardsSectionDraggable extends StatefulWidget{
 
 class _CardsSectionState extends State<CardsSectionDraggable>
 {
+  _CardsSectionState(){
+    Firestore.instance
+    .collection('products')
+    .snapshots()
+    .listen((data) =>
+      data.documents.forEach((doc){
+        print(doc["category"] + " " + doc["description"]);
+        category = doc["category"];
+        description = doc["description"];
+        cards.add(ProfileCardDraggable(cardsCounter, category, description));
+        cardsCounter++;
+      })
+    );
+  }
+
   bool dragOverTarget = false;
+ 
   List<ProfileCardDraggable> cards =  List();
   int cardsCounter = 0;
+  int showCounter = 0;
+  String category;
+  String description;
 
   @override
   void initState(){
     super.initState();
 
     for (cardsCounter = 0; cardsCounter < 3; cardsCounter++){
-      cards.add(ProfileCardDraggable(cardsCounter));
+      cards.add(ProfileCardDraggable(cardsCounter, "a", "b"));
     }
   }
 
@@ -43,7 +63,7 @@ class _CardsSectionState extends State<CardsSectionDraggable>
           Align(
             child:  IgnorePointer(child:  SizedBox.fromSize(
               size:  Size(MediaQuery.of(context).size.width * 0.85, MediaQuery.of(context).size.height * 0.75),
-              child: cards[1],
+              child: cards[showCounter + 1],
             )),
           ),
           // Front card
@@ -52,11 +72,11 @@ class _CardsSectionState extends State<CardsSectionDraggable>
             child:  Draggable(
               feedback:  SizedBox.fromSize(
                 size:  Size(MediaQuery.of(context).size.width * 1, MediaQuery.of(context).size.height * 0.8),
-                child: cards[0],
+                child: cards[showCounter],
               ),
               child:  SizedBox.fromSize(
                 size:  Size(MediaQuery.of(context).size.width * 1, MediaQuery.of(context).size.height * 0.8),
-                child: cards[0],
+                child: cards[showCounter],
               ),
               childWhenDragging:  Container(),
             ),
@@ -66,17 +86,9 @@ class _CardsSectionState extends State<CardsSectionDraggable>
     );
   }
 
-  void changeCardsOrder()
-  {
-    setState(()
-    {
-      // Swap cards
-      var temp = cards[0];
-      cards[0] = cards[1];
-      cards[1] = temp;
-
-      cards[1] =  ProfileCardDraggable(cardsCounter);
-      cardsCounter++;
+  void changeCardsOrder(){
+    setState((){
+      showCounter++;
     });
   }
 

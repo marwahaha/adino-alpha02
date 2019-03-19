@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'authentication.dart';
-import 'home_page.dart';
+import '../authentication.dart';
 import 'market_page.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,14 +47,12 @@ class _LoginPageState extends State<LoginPage> {
 
 	String _email;
 	String _password;
-	// String _errorMessage;
 
   FormMode _formMode = FormMode.LOGIN;
 	bool _isLoading = false;
 
 	@override
   	void initState() {
-	//	_errorMessage = "";
 		_isLoading = false;
 		super.initState();
 
@@ -398,12 +395,12 @@ class _LoginPageState extends State<LoginPage> {
 			try {
 				if (_formMode == FormMode.LOGIN) {
 					FirebaseUser user = await widget._auth.signInWithEmailAndPassword(email: _email, password: _password);
-					Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
+					//Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
 
 					print('Signed in: $userId');
 				} else {
 					FirebaseUser user = await widget._auth.createUserWithEmailAndPassword(email: _email, password: _password);
-					Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
+					//Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
 				
 					widget.ref.push().set("{\"users\": [" + user.uid + "]}");
 					print('Signed up user: $userId');

@@ -1,8 +1,9 @@
 import "package:flutter/material.dart";
-import 'cards_section_draggable.dart';
+import '../utils/cards_section_draggable.dart';
 import 'add_product_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class MarketPage extends StatefulWidget {
   final Widget child;
@@ -15,7 +16,12 @@ class MarketPage extends StatefulWidget {
 
 class _MarketPageState extends State<MarketPage> {
 
-  _MarketPageState(this.user);
+  Firestore db = Firestore.instance; 
+  
+
+  _MarketPageState(this.user){
+    
+  }
   GoogleSignInAccount user;
 
   @override

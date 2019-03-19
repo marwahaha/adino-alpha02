@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'login_page.dart';
+import 'pages/login_page.dart';
 import 'authentication.dart';
-import 'home_page.dart';
+import 'pages/home_page.dart';
 
 class RootPage extends StatefulWidget {
 	RootPage({this.auth});
@@ -78,11 +77,11 @@ class _RootPageState extends State<RootPage> {
 			break;
 		case AuthStatus.LOGGED_IN:
 			if (_userId.length > 0 && _userId != null) {
-			return HomePage(
-				// userId: _userId,
-				// auth: widget.auth,
-				// onSignedOut: _onSignedOut,
-			);
+			// return HomePage(
+			// 	// userId: _userId,
+			// 	// auth: widget.auth,
+			// 	// onSignedOut: _onSignedOut,
+			// );
 			} else return _buildWaitingScreen();
 			break;
 		default:
