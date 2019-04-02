@@ -9,7 +9,28 @@ class CardsSectionDraggable extends StatefulWidget{
 
 class _CardsSectionState extends State<CardsSectionDraggable>
 {
+  bool dragOverTarget = false;
+ 
+  List<ProfileCardDraggable> cards =  List();
+  int cardsCounter = 0;
+  int showCounter = 0;
+  String category;
+  String description;
+  String imageUrl;
+
   _CardsSectionState(){
+    
+  }
+
+  @override
+  void initState(){
+    super.initState();
+
+    for (cardsCounter = 0; cardsCounter <= 1; cardsCounter++){
+      cards.add(ProfileCardDraggable(cardsCounter, "a", "b", null));
+    }
+    print(cardsCounter);
+
     Firestore.instance
     .collection('products')
     .snapshots()
@@ -18,27 +39,12 @@ class _CardsSectionState extends State<CardsSectionDraggable>
         print(doc["category"] + " " + doc["description"]);
         category = doc["category"];
         description = doc["description"];
-        cards.add(ProfileCardDraggable(cardsCounter, category, description));
+        imageUrl = doc["imageUrl"];
+        cards.add(ProfileCardDraggable(cardsCounter, category, description, imageUrl));
         cardsCounter++;
+        print("HERE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>: " + cardsCounter.toString());
       })
     );
-  }
-
-  bool dragOverTarget = false;
- 
-  List<ProfileCardDraggable> cards =  List();
-  int cardsCounter = 0;
-  int showCounter = 0;
-  String category;
-  String description;
-
-  @override
-  void initState(){
-    super.initState();
-
-    for (cardsCounter = 0; cardsCounter < 3; cardsCounter++){
-      cards.add(ProfileCardDraggable(cardsCounter, "a", "b"));
-    }
   }
 
   @override
@@ -63,7 +69,7 @@ class _CardsSectionState extends State<CardsSectionDraggable>
           Align(
             child:  IgnorePointer(child:  SizedBox.fromSize(
               size:  Size(MediaQuery.of(context).size.width * 0.85, MediaQuery.of(context).size.height * 0.75),
-              child: cards[showCounter + 1],
+              child: cards[((showCounter + 1) < cardsCounter?(showCounter+1):showCounter)],
             )),
           ),
           // Front card
@@ -88,7 +94,11 @@ class _CardsSectionState extends State<CardsSectionDraggable>
 
   void changeCardsOrder(){
     setState((){
-      showCounter++;
+      if(showCounter < cardsCounter - 1){
+        
+        ++showCounter;
+        print(showCounter.toString() + " showCounter");
+      } else return;
     });
   }
 
@@ -105,6 +115,7 @@ class _CardsSectionState extends State<CardsSectionDraggable>
         },
         onAccept: (_){
           changeCardsOrder();
+          print(cardsCounter.toString() + " cards counter");
           setState(() => dragOverTarget = false);
         },
         onLeave: (_) => setState(() => dragOverTarget = false)

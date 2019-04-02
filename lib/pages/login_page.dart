@@ -6,22 +6,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 import 'package:google_sign_in/google_sign_in.dart';
 import "package:http/http.dart" as http;
 
 import 'dart:async';
 import 'dart:convert' show json;
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  scopes: <String>[
-    'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
-  ],
-);
+
 
 enum FormMode { LOGIN, SIGNUP }
 
 class LoginPage extends StatefulWidget {
+
+  
   
   static String tag = "login-tag";
   LoginPage({this.auth, this.onSignedIn});
@@ -37,16 +35,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: <String>[
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+
   GoogleSignInAccount _currentUser;
   Firestore db = Firestore.instance;
   FirebaseUser user;
-
-  String _contactText;
-
 	final _formKey = new GlobalKey<FormState>();
 
 	String _email;
 	String _password;
+  String _contactText;
 
   FormMode _formMode = FormMode.LOGIN;
 	bool _isLoading = false;
@@ -55,7 +58,6 @@ class _LoginPageState extends State<LoginPage> {
   	void initState() {
 		_isLoading = false;
 		super.initState();
-
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
       setState(() {
         _currentUser = account;
@@ -64,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
         _handleGetContact();
       }
     });
-    // _googleSignIn.signInSilently();
+     _googleSignIn.signInSilently();
     _handleSignOut();
   }
 
@@ -126,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
             });
           }
         }); 
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPage(user: _currentUser)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPage(user: _currentUser, googleSignIn: _googleSignIn)));
       });
     } catch (error) {
       print(error);
@@ -198,9 +200,9 @@ class _LoginPageState extends State<LoginPage> {
 					color: Colors.black,
 					child: _formMode == FormMode.LOGIN
             ? Text('Login',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white))
+                style: TextStyle(fontSize: 20.0, color: Colors.white))
             : Text('Create account',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white))
+                style: TextStyle(fontSize: 20.0, color: Colors.white))
 				)
 			)
 		);
@@ -246,16 +248,6 @@ class _LoginPageState extends State<LoginPage> {
 			)
 		);
 	}
-
-	Widget _showForgotLabel() {
-		return FlatButton(
-			child: Text(
-				'Forgot password?',
-				style: TextStyle(color: Colors.grey),
-			),
-			onPressed: () {},
-   		);
-	} 
 
   //## Mayusenever code
 
@@ -345,14 +337,6 @@ class _LoginPageState extends State<LoginPage> {
 			)
 		);
 	}
-	
-	Widget _showCircularProgress(){
-  		if (_isLoading) { 
-			return Center(
-				child: CircularProgressIndicator()
-			);
-  		} return Container(height: 0.0, width: 0.0,);
-	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -360,7 +344,6 @@ class _LoginPageState extends State<LoginPage> {
 			body: Stack(
 				children: <Widget>[
 				_showBody(),
-				//_showCircularProgress(),
 				],
 			));
 	}

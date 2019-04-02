@@ -3,6 +3,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'dart:io';
 import 'add_category_page.dart';
@@ -20,9 +21,11 @@ class _AddProductPageState extends State<AddProductPage> {
   _AddProductPageState(this.user);
   
   GoogleSignInAccount user;
-  Firestore db = Firestore.instance; 
+  Firestore db = Firestore.instance;
+   
   String _userDisplayName;
   String _userPhotoUrl;
+  
 
   // Make a "Product" class instead
   
@@ -31,15 +34,26 @@ class _AddProductPageState extends State<AddProductPage> {
   String _pref1 = " ";
   String _pref2 = " ";
   String _pref3 = " ";
+  String _imageUrl;
   
   File _image;
-  List<Widget> pictures = [];
-	int iCount = 0; 
+
+  static Widget placeholder = Image.network(
+    "https://carepharmaceuticals.com.au/wp-content/uploads/sites/19/2018/02/placeholder-600x400.png",
+    fit: BoxFit.cover,
+  );
+  
+  List<Widget> pictures = [placeholder];
+  bool isPlaceholder = false;
+  
+	int picCounter = 1; 
 
   @override
 	void initState() {
+
     _userDisplayName = user.displayName;
     _userPhotoUrl = user.photoUrl;
+    
     
 		super.initState();
 	}
@@ -48,18 +62,36 @@ class _AddProductPageState extends State<AddProductPage> {
 		var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
 		
 		setState(() {
+      
+    
+
 			_image = tempImage;
 			pictures.add(Image.file(_image, fit: BoxFit.cover));
-		  iCount = pictures.length;
+		  picCounter = pictures.length;
+
+      // final StorageReference storRef = FirebaseStorage.instance.ref().child('myimage.jpg');
+      // final StorageUploadTask uploadTask = storRef.putFile(_image);
+      // String imageUrl = storRef.child("myimage.jpg").getDownloadURL();
+
+      uploadImage(_image);
 		});
 	}
 
+  Future<String> uploadImage(var imageFile) async {
+    StorageReference ref = FirebaseStorage.instance.ref().child("${user.id}/photo.jpg");
+    StorageUploadTask uploadTask = ref.putFile(imageFile);
+
+    var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+    _imageUrl = dowurl.toString();
+    return _imageUrl; 
+  }
 
   dynamic _navigateAndChooseCategory(BuildContext context, String label) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddCategory()),
     );
+
     switch(label) { 
       case "category": (result != null) ? _mainCategory = result : null;
       break; 
@@ -82,16 +114,54 @@ class _AddProductPageState extends State<AddProductPage> {
       "pref1": _pref1,
       "pref2": _pref2,
       "pref3": _pref3,
-      "userID": user.id
+      "userID": user.id,
+      "imageUrl": _imageUrl
     });
 
     Navigator.pop(context);
+  }
 
+  Widget _categoryButton(){
+    if(_mainCategory == null){
+      return RaisedButton(
+      child: Text(
+        "Add Category",
+        style: TextStyle(
+          letterSpacing: 2.0
+        )),
+      textColor: Colors.grey.shade600,
+      onPressed:(){
+        _navigateAndChooseCategory(context, "category");
+      },
+      color: Colors.grey.shade200,
+      splashColor: Colors.grey,
+      padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+    );
+    } else {
+      return RaisedButton(
+        child: Text(
+          "Change",
+          style: TextStyle(
+            letterSpacing: 2.0
+          )),
+        textColor: Colors.grey.shade600,
+        onPressed:(){
+          _navigateAndChooseCategory(context, "category");
+        },
+        color: Colors.grey.shade200,
+        splashColor: Colors.grey,
+        padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0)
+      );
+    }
+    
   }
 
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
+      appBar: AppBar(
+        title: Text("Add Product"),
+      ),
 			body: Column(
 			children: <Widget>[
         Expanded(
@@ -104,7 +174,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   itemBuilder: (BuildContext context, int index) {
                     return pictures[index];
                   },
-                  itemCount: iCount,
+                  itemCount: picCounter,
                   pagination: new SwiperPagination(
                     builder: DotSwiperPaginationBuilder(
                       activeColor: Colors.black,
@@ -168,6 +238,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(15.0, 8.0, 8.0, 15.0),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.fromLTRB(0.0, 0, 0, 0),
@@ -182,28 +253,19 @@ class _AddProductPageState extends State<AddProductPage> {
                                   fontFamily: "Champ1" 
                                 ),
                               ),
-                              Text(
-                                "Night Out",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
+                              // Text(
+                              //   "Subcategories soon",
+                              //   style: TextStyle(
+                              //     color: Colors.black,
+                              //     fontSize: 16.0,
+                              //     fontWeight: FontWeight.bold,
+                              //   ),
+                              // )
                             ],
                           crossAxisAlignment: CrossAxisAlignment.start,
                           ),
                         ),
-                        RaisedButton(
-                          child: Text("Add Category"),
-                          textColor: Colors.white,
-                          onPressed:(){
-                            _navigateAndChooseCategory(context, "category");
-                          },
-                          color: Colors.black,
-                          splashColor: Colors.grey,
-                          padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-                        )
+                        _categoryButton()
                       ],
                     ),
                   ),
@@ -215,7 +277,6 @@ class _AddProductPageState extends State<AddProductPage> {
                   keyboardType: TextInputType.text,
                   maxLines: null,
                   maxLength: 150,
-                  
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder( 
                     ),

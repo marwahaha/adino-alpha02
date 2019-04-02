@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'authentication.dart';
+import 'pages/market_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,9 +11,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Adino',
       theme: ThemeData(
-        primarySwatch: Colors.grey,
+        primaryColor: Colors.white,
       ),
-      home: LoginPage(auth: new Auth()),
+      home: MarketPage(),
 		);
   }
 }

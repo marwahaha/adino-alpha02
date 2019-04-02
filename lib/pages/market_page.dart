@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import '../utils/cards_section_draggable.dart';
 import 'add_product_page.dart';
+import 'user_page.dart';
+import '../utils/tab_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -8,27 +10,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MarketPage extends StatefulWidget {
   final Widget child;
   GoogleSignInAccount user;
+  GoogleSignIn googleSignIn;
+  
+  MarketPage({Key key, this.child, this.user, this.googleSignIn}) : super(key: key);
 
-  MarketPage({Key key, this.child, this.user}) : super(key: key);
-
-  _MarketPageState createState() => _MarketPageState(user);
+  _MarketPageState createState() => _MarketPageState(user, googleSignIn);
 }
 
 class _MarketPageState extends State<MarketPage> {
 
-  Firestore db = Firestore.instance; 
-  
-
-  _MarketPageState(this.user){
-    
+  Firestore db = Firestore.instance;
+  _MarketPageState(this.user, this.googleSignIn){
+    print(googleSignIn);
   }
   GoogleSignInAccount user;
+  GoogleSignIn googleSignIn;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       body: Column(
-        children: <Widget>[
+       body: Builder(
+          builder: (context) => Column(
+          children: <Widget>[
           Container(
             color: Colors.grey.shade200,
             height: 75,
@@ -36,7 +39,9 @@ class _MarketPageState extends State<MarketPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 RawMaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserPage(user: user, googleSignIn: googleSignIn)));
+                  },
                   child:  Icon(
                     Icons.account_circle,
                     color: Colors.black,
@@ -46,7 +51,9 @@ class _MarketPageState extends State<MarketPage> {
                   padding: const EdgeInsets.all(0.0),
                 ),
                 RawMaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => DTabController()));
+                  },
                   child:  Icon(
                     Icons.sms,
                     color: Colors.black,
@@ -57,6 +64,16 @@ class _MarketPageState extends State<MarketPage> {
                 )
               ],
             )
+          ),
+          Container(
+            
+            height: 35.0,
+            width: double.infinity,
+            color: Colors.white,
+            child: RawMaterialButton(
+              child: Text("FILTER", style: TextStyle(fontSize: 10,color: Colors.black)),
+              onPressed: (){},
+            ),
           ),
           CardsSectionDraggable(),
           Container(
@@ -91,7 +108,19 @@ class _MarketPageState extends State<MarketPage> {
                 ),
                 RawMaterialButton(
                   fillColor:Colors.black ,
-                  onPressed: () {},
+                  onPressed: () {
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Item added to your favourites!"),
+                        action: SnackBarAction(
+                          label: 'Fuck yeah',
+                          onPressed: () {
+                            Scaffold.of(context).removeCurrentSnackBar();
+                          }
+                        )
+                      )
+                    );
+                  },
                   child: Icon(
                     Icons.favorite,
                     color: Colors.white,
@@ -105,6 +134,7 @@ class _MarketPageState extends State<MarketPage> {
           )
         ],
       ),
+    )
     );
   }
 }
