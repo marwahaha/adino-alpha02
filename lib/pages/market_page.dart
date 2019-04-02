@@ -113,7 +113,7 @@ class _MarketPageState extends State<MarketPage> {
                       SnackBar(
                         content: Text("Item added to your favourites!"),
                         action: SnackBarAction(
-                          label: 'Fuck yeah',
+                          label: 'Fuck yeaeh',
                           onPressed: () {
                             Scaffold.of(context).removeCurrentSnackBar();
                           }
