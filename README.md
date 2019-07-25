@@ -48,7 +48,7 @@ Flutter application - Exchange second-hand fashion items.
 
 ## Sam TODOs
 
-1. finisih writing aboutthe algorithms and machine learning
+1. finisih writing about the algorithms and machine learning
 2. find the requiremnt specification
 3. do some diagrams about the system architecher
 4. improve the ui 
